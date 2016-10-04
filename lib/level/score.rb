@@ -10,4 +10,5 @@ class Score
   def draw
     @text.draw(@points, Game::WINDOW_WIDTH-MARGIN_RIGHT, MARGIN_TOP,1)
   end
+  
 end

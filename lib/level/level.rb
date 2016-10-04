@@ -10,7 +10,7 @@ class Level
     @player = PlayerShip.new
     @laser = []
     @score = Score.new
-    @lives = LifeCounter.new
+    @lives_counter = LifeCounter.new
     #@enemy_ship = EnemyShip.new('enemy_4.png',200, 10)
     @enemy_ships = []
     @enemy_ships_definitions = enemy_ships_definitions
@@ -24,7 +24,7 @@ class Level
       end
     end
     @score.draw
-    @lives.draw
+    @lives_counter.draw
     if @enemy_ships != nil
       @enemy_ships.each do |enemy_ships|
         enemy_ships.draw
@@ -42,6 +42,8 @@ class Level
     end
   end
 
+
+
   def update
     if @window.button_down?(Gosu::KbUp) || @window.button_down?(Gosu::KbW)
       @player.move_up!
@@ -56,10 +58,18 @@ class Level
     @laser.reject! {|laser| laser.is_out?}
     create_enemy_ship
     if @enemy_ships != nil && !@enemy_ships.empty?
-      @enemy_ships.each do |enemy_ship|
+        @enemy_ships.each do |enemy_ship|
         enemy_ship.move!
+        if enemy_ship.was_hit?(@laser)
+          enemy_ship.destroy!
+        elsif enemy_ship.is_out?
+          @life_counter.lose_life!
+        end
       end
     end
+
+    @enemy_ships.reject! { |ship| ship.is_out? || ship.destroyed?}
+
   end
 
   def create_enemy_ship
@@ -82,5 +92,6 @@ class Level
       1000
     end
   end
+
 
 end
